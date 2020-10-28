@@ -1,0 +1,153 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <!-- Compiled and minified CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
+  <link rel="stylesheet" href="styles/index.css">
+
+  <title>Chit Chat</title>
+</head>
+
+<body class="grey lighten-3">
+  <!-- NAVBAR -->
+  <nav class="z-depth-0" id="navBar">
+    <div>
+      <ul>
+        <li class="logged-in" id="SearchPeople">
+          <input type="text" id="searchName" placeholder="Search">
+        </li>
+        <li class="logged-in">
+          <button onclick="Search()" id="SearchBtn">Search</button>
+        </li>
+      </ul>
+
+      <ul class="right" id="navBarList">
+        <li class="logged-in">
+          <a href="#" id="Verification" onclick="SendEmail()"> Send Verification</a>
+        </li>
+        <li class="logged-in">
+          <a href="#" id="logout">Logout</a>
+        </li>
+        <li class="logged-in">
+          <a href="#" class="modal-trigger" id="userName" data-target="modal-account"> </a>
+        </li>
+        <li class="logged-in">
+          <a href="#" class="modal-trigger" id="newMessages" data-target="modal-messages"></a>
+        </li>
+
+
+        <li class="logged-out">
+          <a href="#" class="modal-trigger" data-target="modal-login">Login</a>
+        </li>
+        <li class="logged-out">
+          <a href="#" class="modal-trigger " data-target="modal-signup">Sign up</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- SIGN UP MODAL -->
+  <div id="modal-signup" class="modal">
+    <div class="modal-content">
+      <h4>Sign up</h4>
+      <br />
+      <form id="signup-form">
+        <input type="email" id="signup-email" placeholder="Email adress" required />
+        <input type="password" id="signup-password" placeholder="Password" required />
+        <input type="text" id="signup-name" placeholder="First name" required />
+        <input type="text" id="signup-surname" placeholder="Last name" required />
+        <button class="btn">Sign up</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- LOGIN MODAL -->
+  <div id="modal-login" class="modal">
+    <div class="modal-content">
+      <h4>Login</h4>
+      <br />
+      <form id="login-form">
+        <input type="email" id="login-email" placeholder="Email address" required />
+        <input type="password" id="login-password" placeholder="Password" required />
+        <button class="btn">Login</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ACCOUNT MODAL -->
+  <div id="modal-account" class="modal">
+    <p id="accountDetailsHeader">Account information</p>
+    <div class="pictureDetails" id="pictureDetails">
+      <p>Change profile picture: </p>
+      <p> <input type="file" value="upload" id="photo" /> </p>
+    </div>
+    <div class="currentPicture">
+      <p class="accountDetails"> Your current profile picture:</p>
+    </div>
+    <div id="account-details" class="accountDetails"></div>
+  </div>
+
+  <!-- opet chit chat -->
+
+  <div id="modal-messages" class="modal">
+    <p id="unreadMessagesHeader">Unread messages</p>
+    <div id="unreadMessages"></div>
+  </div>
+
+  <div class="row">
+    <div class="Users col s4 m2 l2 logged-in" id="Users"></div>
+    <div class="chat col s8 offset-s6 m9 offset-m5 l9 offset-l4 logged-in">
+      <div class="row">
+        <div class="chat-header col s12" id="chat-header"> Chit-chat</div>
+
+        <div class="chat-window col s12">
+
+          <ul id="messages"></ul>
+          <p id="SeenMsg"> Seen</p>
+
+          <form id="msgform">
+            <input type="text" class="col s6 m7 l8" id="msg-input" placeholder="Enter a message" autocomplete="off" />
+            <button id="msg-btn" disabled>Send</button>
+          </form>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ovo je kraj -->
+
+
+  <script src="https://www.gstatic.com/firebasejs/7.9.3/firebase.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.9.3/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.9.3/firebase-storage.js"></script>
+  <script>
+
+    var firebaseConfig = {
+      apiKey: "AIzaSyDtAuoqKhVI8zimFs7nUI2u96UQOrHwSGo",
+      authDomain: "fir-chit-chat.firebaseapp.com",
+      databaseURL: "https://fir-chit-chat.firebaseio.com",
+      projectId: "fir-chit-chat",
+      storageBucket: "fir-chit-chat.appspot.com",
+      messagingSenderId: "861333522173",
+      appId: "1:861333522173:web:63d28f4cd12eea058aa094"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.database();
+    const userRef = db.ref("/users");
+
+  </script>
+
+  <!-- Compiled and minified JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script src="scripts/auth.js"></script>
+  <script src="scripts/index.js"></script>
+</body>
+
+</html>
