@@ -111,8 +111,22 @@ logout.addEventListener("click", (event) => {
     window.alert(error.message);
   });
 });
+///da odlogira usera koji zatvori ili refresha prozor
+
+window.onbeforeunload = function () {
 
 
+
+  if (previousUser != 1) {
+    db.ref("/users/" + previousUser.uid).update({
+      active: false,
+    });
+    previousUser = 1;
+  }
+
+
+
+};
 
 ///////////////////logiranje
 const login = document.getElementById("login-form");
@@ -122,20 +136,35 @@ login.addEventListener("submit", (event) => {
   const email = document.getElementById("login-email").value;
   const password = document.getElementById("login-password").value;
 
-  auth.signInWithEmailAndPassword(email, password).then(function () {
+  ///tu si dodao ovaj setPersistance da ti se odlogira cim refreshas ili ugasis prozor
+  firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE)
+    .then(function () {
+      // Existing and future Auth states are now persisted in the current
+      // session only. Closing the window would clear any existing state even
+      // if a user forgets to sign out.
+      // ...
+      // New sign-in will be persisted with session persistence.
+      ///od ovog je tvoj stari login
+      auth.signInWithEmailAndPassword(email, password).then(function () {
 
-    const modal = document.querySelector("#modal-login");
-    M.Modal.getInstance(modal).close();
-    login.reset();
-    var currentUser = firebase.auth().currentUser;
-    ShowAlertMessage(currentUser);
-    UpdateActiveStatus(currentUser);
+        const modal = document.querySelector("#modal-login");
+        M.Modal.getInstance(modal).close();
+        login.reset();
+        var currentUser = firebase.auth().currentUser;
+        ShowAlertMessage(currentUser);
+        UpdateActiveStatus(currentUser);
+        Refresh();
+        msgRef.on("child_added", checkMessages);
+        // location.reload();
+      })
+        .catch((error) => {
+          window.alert(error.message);
+        })
+      ///pa do ovog
+    })
 
-    location.reload();
-  })
-    .catch((error) => {
-      window.alert(error.message);
-    });
+
+
 });
 
 
@@ -245,26 +274,26 @@ msgBtn.addEventListener("click", (event) => {
     return;
   }
 
-  var message = msgInput.value;
-  msgInput.value = "";
-  ///sve dok je vece ili jednako n-u izvrti ovu petlju, rastavi na 2 dijela kako bi mogao dodjeliti crticu
-  ///ako prvi dio na kraju nema razmak(prazan prostor) i iduci znak isto nije razmak i prvi dio je duzine 75(max) stavi crticu
-  for (var n = 0; msgInput.value.trim().length >= n;) {
+  // var message = msgInput.value;
+  // msgInput.value = "";
+  // ///sve dok je vece ili jednako n-u izvrti ovu petlju, rastavi na 2 dijela kako bi mogao dodjeliti crticu
+  // ///ako prvi dio na kraju nema razmak(prazan prostor) i iduci znak isto nije razmak i prvi dio je duzine 75(max) stavi crticu
+  // for (var n = 0; msgInput.value.trim().length >= n;) {
 
-    var firstPart = message.slice(n, n + 75);
-    var secondPart = message.slice(n, n + 76);
+  //   var firstPart = message.slice(n, n + 75);
+  //   var secondPart = message.slice(n, n + 76);
 
-    if (firstPart.slice(74) != " " && secondPart.slice(75) != " " && firstPart.length == 75) {
-      msgInput.value += firstPart + "-" + "<br>";
-    }
-    else if (firstPart.length == 75) {
-      msgInput.value += firstPart + "<br>";
-    }
-    else {
-      msgInput.value += firstPart;
-    }
-    n = n + 75;
-  }
+  //   if (firstPart.slice(74) != " " && secondPart.slice(75) != " " && firstPart.length == 75) {
+  //     msgInput.value += firstPart + "-" + "<br>";
+  //   }
+  //   else if (firstPart.length == 75) {
+  //     msgInput.value += firstPart + "<br>";
+  //   }
+  //   else {
+  //     msgInput.value += firstPart;
+  //   }
+  //   n = n + 75;
+  // }
 
   AddMessageToDatabase(msgInput)
 });
@@ -272,12 +301,12 @@ msgBtn.addEventListener("click", (event) => {
 
 function AddMessageToDatabase(msgInput) {
   var currentUser = firebase.auth().currentUser;
-
+  var msgInputReplaced = msgInput.value.replace(":)", "<img src='https://cdn.shopify.com/s/files/1/1061/1924/products/Slightly_Smiling_Face_Emoji_87fdae9b-b2af-4619-a37f-e484c5e2e7a4_large.png?v=1571606036' style='width: 20px; height:20px;'>");
   const msg = {
     isSeen: false,
     IDsender: currentUser.uid,
     IDreciever: chosenNameID,
-    text: msgInput.value,
+    text: msgInputReplaced,
   };
   msgRef.push(msg);
   msgInput.value = "";
